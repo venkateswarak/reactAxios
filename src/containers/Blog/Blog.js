@@ -9,7 +9,8 @@ import axios from 'axios';
 class Blog extends Component {
     state = {
         posts: [],
-        selectedPostID: null
+        selectedPostID: null,
+        error: false
     }
     componentDidMount(){
         axios.get('https://jsonplaceholder.typicode.com/posts')
@@ -24,6 +25,11 @@ class Blog extends Component {
             this.setState({
                 posts : updatedPosts})
         })
+
+        .catch(error => {
+            this.setState({
+                error : true})
+        })
     }
 
     postClickedHandler = (id) => {
@@ -31,14 +37,19 @@ class Blog extends Component {
         this.setState({selectedPostID: id})
 
     }
+
     render () {
-        const posts = this.state.posts.map(post => {
-            return <Post key={post.id} 
-            title={post.title} 
-            author = {post.author}
-            clicked = {()=>this.postClickedHandler(post.id)}
-            />
-        })
+        let posts = <div style={{textAlign:'center'}}>Something Went Wrong!</div> 
+        if(!this.state.error){
+            posts = this.state.posts.map(post => {
+                return <Post key={post.id} 
+                title={post.title} 
+                author = {post.author}
+                clicked = {()=>this.postClickedHandler(post.id)}
+                />
+            })
+        }
+
         return (
             <div>
                 <section className="Posts">
